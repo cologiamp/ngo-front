@@ -19,7 +19,6 @@
       
     <div class="column" style="background-color:#bbb;">
         <h2>Previous Donated</h2>
-
         <ul id="example-1">
           <li v-for="item in donations" :key="item.id">
             {{ item.name }}
@@ -29,6 +28,17 @@
             Date: {{ item.created }}
           </li>
         </ul>
+      <!--
+        <ul id="example-1">
+          <li v-for="item in donations" :key="item.id">
+            {{ item.name }}
+            <br>
+            Amount Donated: {{ item.amount }}
+            <br>
+            Date: {{ item.created }}
+          </li>
+        </ul>
+      -->
 
         <textarea  v-model="response"></textarea>
     </div>
@@ -52,7 +62,9 @@ export default {
           response: "",
           ngos: [],
           donations: [],
-          selected: ""
+          totalDonations: [],
+          showTotalDonations: [],
+          selected: "",
       }
   },
   mounted() {
@@ -78,11 +90,34 @@ export default {
       fetch('http://ngodonate.com/api5/action/get/donations')
         .then(response => response.json())
         .then(data => this.donations = data)
-        .then(data => this.calcTotalDonations(data));
+        .then((data) => {
+            this.donations = data
+            this.calcTotalDonations(data);
+          });
     },
-    calcTotalDonations(data){
+    calcTotalDonations(donations){
       console.log("calcTotalDonations");
-      console.log(data);
+      console.log(donations);
+      this.totalDonations = [];
+      for(var i=0;i<donations.length;i++){
+
+        if(!this.totalDonations[donations[i].ngoId]){
+          this.totalDonations[donations[i].ngoId] = {
+            "name": donations[i].name,
+            "ngoId": donations[i].ngoId,
+            "total": 0,
+          }
+        }
+        //this.totalDonations.push()
+        this.totalDonations[donations[i].ngoId].total = parseInt(this.totalDonations[donations[i].ngoId].total) + parseInt(donations[i].amount);
+      
+      }
+
+      console.log("APA: ");
+      console.log(this.totalDonations);
+      this.totalDonations = this.totalDonations.filter(Boolean);
+      console.log("DEFINITIVO: ");
+      console.log(this.totalDonations);
     },
     /*
     getDonations(){
