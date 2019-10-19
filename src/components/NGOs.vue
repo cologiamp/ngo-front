@@ -20,12 +20,11 @@
     <div class="column" style="background-color:#bbb;">
         <h2>Previous Donated</h2>
         <ul id="example-1">
-          <li v-for="item in donations" :key="item.id">
+          <li v-for="item in totalDonations" :key="item.ngoId">
             {{ item.name }}
             <br>
-            Amount Donated: {{ item.amount }}
+            Amount Donated: {{ item.total }}
             <br>
-            Date: {{ item.created }}
           </li>
         </ul>
       <!--
@@ -39,8 +38,6 @@
           </li>
         </ul>
       -->
-
-        <textarea  v-model="response"></textarea>
     </div>
     
     </div>
