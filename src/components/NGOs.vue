@@ -22,7 +22,7 @@
 
         <ul id="example-1">
           <li v-for="item in donations" :key="item.id">
-            NGO: {{ item.ngoId }}
+            {{ item.name }}
             <br>
             Amount Donated: {{ item.amount }}
             <br>
