@@ -20,9 +20,13 @@
     <div class="column" style="background-color:#bbb;">
         <h2>Previous Donated</h2>
 
-        <ul id="example-1" style="list-style-type:circle;">
-          <li v-for="item in ngos" :key="item.id">
-            {{ item.name }}
+        <ul id="example-1">
+          <li v-for="item in donations" :key="item.id">
+            NGO: {{ item.ngoId }}
+            <br>
+            Amount Donated: {{ item.amount }}
+            <br>
+            Date: {{ item.created }}
           </li>
         </ul>
 
@@ -47,14 +51,15 @@ export default {
           },
           response: "",
           ngos: [],
-          inventory: [],
+          donations: [],
           selected: ""
       }
   },
   mounted() {
-    //this.inventory = this.getinventory2();
     //this.ngos = this.getNGOs();
     this.getNGOs();
+    //this.getDonations();
+    this.getDonations2();
     /*
     axios({ method: "GET", "url": "http://ngodonate.com/api5/action/get/ngos" }).then(result => {
           this.setNgos(result.data.origin);
@@ -62,8 +67,6 @@ export default {
           console.error(error);
     });
     */
-    //this.getinventory();
-    this.getDonations();
   },
   methods: {
     getNGOs(){
@@ -71,16 +74,17 @@ export default {
         .then(response => response.json())
         .then(data => this.ngos = data);
     },
+    getDonations2(){
+      fetch('http://ngodonate.com/api5/action/get/donations')
+        .then(response => response.json())
+        .then(data => this.donations = data);
+    },
     getDonations(){
       axios({ method: "GET", "url": "http://ngodonate.com/api5/action/get/donations" }).then(result => {
-          this.ip = result.data.origin;
+          this.donations = result.data.origin;
       }, error => {
           console.error(error);
       });
-    },
-    setNgos(ngos){
-          console.log("NGOS "+ngos);
-          this.inventory.push(ngos);
     },
     //GET NGOs Names
     /*
@@ -127,8 +131,7 @@ ul {
   padding: 0;
 }
 li {
-  display: inline-block;
-  margin: 0 10px;
+  margin: 0 20px 20px;
 }
 a {
   color: #42b983;
@@ -143,7 +146,6 @@ a {
   float: left;
   width: 50%;
   padding: 10px;
-  height: 300px; /* Should be removed. Only for demonstration */
 }
 
 /* Clear floats after the columns */
