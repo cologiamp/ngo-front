@@ -19,14 +19,25 @@
       
     <div class="column" style="background-color:#bbb;">
         <h2>Previous Donated</h2>
-
-        <ul id="example-1" style="list-style-type:circle;">
-          <li v-for="item in ngos" :key="item.id">
+        <ul id="example-1">
+          <li v-for="item in totalDonations" :key="item.ngoId">
             {{ item.name }}
+            <br>
+            Amount Donated: {{ item.total }}
+            <br>
           </li>
         </ul>
-
-        <textarea  v-model="response"></textarea>
+      <!--
+        <ul id="example-1">
+          <li v-for="item in donations" :key="item.id">
+            {{ item.name }}
+            <br>
+            Amount Donated: {{ item.amount }}
+            <br>
+            Date: {{ item.created }}
+          </li>
+        </ul>
+      -->
     </div>
     
     </div>
@@ -47,14 +58,17 @@ export default {
           },
           response: "",
           ngos: [],
-          inventory: [],
-          selected: ""
+          donations: [],
+          totalDonations: [],
+          showTotalDonations: [],
+          selected: "",
       }
   },
   mounted() {
-    //this.inventory = this.getinventory2();
     //this.ngos = this.getNGOs();
     this.getNGOs();
+    //this.getDonations();
+    this.getDonations();
     /*
     axios({ method: "GET", "url": "http://ngodonate.com/api5/action/get/ngos" }).then(result => {
           this.setNgos(result.data.origin);
@@ -62,8 +76,6 @@ export default {
           console.error(error);
     });
     */
-    //this.getinventory();
-    this.getDonations();
   },
   methods: {
     getNGOs(){
@@ -72,16 +84,47 @@ export default {
         .then(data => this.ngos = data);
     },
     getDonations(){
+      fetch('http://ngodonate.com/api5/action/get/donations')
+        .then(response => response.json())
+        .then(data => this.donations = data)
+        .then((data) => {
+            this.donations = data
+            this.calcTotalDonations(data);
+          });
+    },
+    calcTotalDonations(donations){
+      console.log("calcTotalDonations");
+      console.log(donations);
+      this.totalDonations = [];
+      for(var i=0;i<donations.length;i++){
+
+        if(!this.totalDonations[donations[i].ngoId]){
+          this.totalDonations[donations[i].ngoId] = {
+            "name": donations[i].name,
+            "ngoId": donations[i].ngoId,
+            "total": 0,
+          }
+        }
+        //this.totalDonations.push()
+        this.totalDonations[donations[i].ngoId].total = parseInt(this.totalDonations[donations[i].ngoId].total) + parseInt(donations[i].amount);
+      
+      }
+
+      console.log("APA: ");
+      console.log(this.totalDonations);
+      this.totalDonations = this.totalDonations.filter(Boolean);
+      console.log("DEFINITIVO: ");
+      console.log(this.totalDonations);
+    },
+    /*
+    getDonations(){
       axios({ method: "GET", "url": "http://ngodonate.com/api5/action/get/donations" }).then(result => {
-          this.ip = result.data.origin;
+          this.donations = result.data.origin;
       }, error => {
           console.error(error);
       });
     },
-    setNgos(ngos){
-          console.log("NGOS "+ngos);
-          this.inventory.push(ngos);
-    },
+    */
     //GET NGOs Names
     /*
     getNGOs() {
@@ -105,6 +148,7 @@ export default {
             "Content-Type": "application/json" }
           }).then(result => {
             this.response = result.data;
+            this.getDonations();
         }, error => {
             console.error(error);
         });
@@ -127,8 +171,7 @@ ul {
   padding: 0;
 }
 li {
-  display: inline-block;
-  margin: 0 10px;
+  margin: 0 20px 20px;
 }
 a {
   color: #42b983;
@@ -143,7 +186,6 @@ a {
   float: left;
   width: 50%;
   padding: 10px;
-  height: 300px; /* Should be removed. Only for demonstration */
 }
 
 /* Clear floats after the columns */
