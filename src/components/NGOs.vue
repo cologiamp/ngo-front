@@ -78,10 +78,11 @@ export default {
       fetch('http://ngodonate.com/api5/action/get/donations')
         .then(response => response.json())
         .then(data => this.donations = data)
-        .then(donationsArr => this.calcTotalDonations());
+        .then(data => this.calcTotalDonations(data));
     },
-    calcTotalDonations(){
+    calcTotalDonations(data){
       console.log("calcTotalDonations");
+      console.log(data);
     },
     /*
     getDonations(){
