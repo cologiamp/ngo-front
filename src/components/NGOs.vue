@@ -59,7 +59,7 @@ export default {
     //this.ngos = this.getNGOs();
     this.getNGOs();
     //this.getDonations();
-    this.getDonations2();
+    this.getDonations();
     /*
     axios({ method: "GET", "url": "http://ngodonate.com/api5/action/get/ngos" }).then(result => {
           this.setNgos(result.data.origin);
@@ -74,11 +74,16 @@ export default {
         .then(response => response.json())
         .then(data => this.ngos = data);
     },
-    getDonations2(){
+    getDonations(){
       fetch('http://ngodonate.com/api5/action/get/donations')
         .then(response => response.json())
-        .then(data => this.donations = data);
+        .then(data => this.donations = data)
+        .then(donationsArr => this.calcTotalDonations());
     },
+    calcTotalDonations(){
+      console.log("calcTotalDonations");
+    },
+    /*
     getDonations(){
       axios({ method: "GET", "url": "http://ngodonate.com/api5/action/get/donations" }).then(result => {
           this.donations = result.data.origin;
@@ -86,6 +91,7 @@ export default {
           console.error(error);
       });
     },
+    */
     //GET NGOs Names
     /*
     getNGOs() {
@@ -109,6 +115,7 @@ export default {
             "Content-Type": "application/json" }
           }).then(result => {
             this.response = result.data;
+            this.getDonations();
         }, error => {
             console.error(error);
         });
